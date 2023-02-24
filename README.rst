@@ -34,10 +34,11 @@ tinyShakespeareLoader
 =====================
 
 
-    Add a short description here!
+    A PyTorch DataLoader for the TinyShakespeare Dataset
 
 
-A longer description of your project goes here...
+If you followed Andrej Karparthy's tutorial on GPT, you will notice he used the TinyShakespeare dataset, but not with the PyTorch DataLoader. 
+This repository fills that gap.
 
 
 .. _pyscaffold-notes:
