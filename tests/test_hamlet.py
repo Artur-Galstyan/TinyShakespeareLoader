@@ -48,6 +48,7 @@ def test_dataloaders_iterability():
     for x, y in train_data:
         assert x.shape[1] == block_size and y.shape[1] == block_size
 
+
 '''
 def test_main(capsys):
     """CLI Tests"""

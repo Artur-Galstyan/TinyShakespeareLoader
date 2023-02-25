@@ -1,6 +1,6 @@
 .. These are examples of badges you might want to add to your README:
    please update the URLs accordingly
-   
+
 ..    .. image:: https://readthedocs.org/projects/tinyShakespeareLoader/badge/?version=latest
         :alt: ReadTheDocs
         :target: https://tinyShakespeareLoader.readthedocs.io/en/stable/
@@ -34,7 +34,7 @@ TinyShakespeareLoader
     A PyTorch DataLoader for the TinyShakespeare Dataset
 
 
-If you followed Andrej Karparthy's tutorial on GPT, you will notice he used the TinyShakespeare dataset, but not with the PyTorch DataLoader. 
+If you followed Andrej Karparthy's tutorial on GPT, you will notice he used the TinyShakespeare dataset, but not with the PyTorch DataLoader.
 This repository fills that gap.
 
 The TinyShakespeare dataset is a small dataset of Shakespeare's plays, with each line as a separate sample. To install this package, simply run:
@@ -45,8 +45,8 @@ The TinyShakespeare dataset is a small dataset of Shakespeare's plays, with each
 Then, to use it, simply import it and use it as a PyTorch DataLoader:
 
 .. code-block:: python
-    from TinyShakespeareLoader.hamlet import get_data 
-    
+    from TinyShakespeareLoader.hamlet import get_data
+
 
     data = get_data()
 
@@ -59,7 +59,7 @@ Then, to use it, simply import it and use it as a PyTorch DataLoader:
 
 
 
-    
+
 .. _pyscaffold-notes:
 
 Note

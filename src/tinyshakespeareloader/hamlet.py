@@ -41,7 +41,7 @@ _logger = logging.getLogger(__name__)
 
 
 import numpy as np
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader, Dataset
 
 
 class MiniShakesPeare(Dataset):
@@ -73,15 +73,14 @@ class MiniShakesPeare(Dataset):
 
 def get_data(batch_size=4, train_ratio=0.9, block_size=8):
     """Get the train and test dataloaders as well as the vocabulary size, the vocabulary itself, the encoding and decoding functions.
-    The data is downloaded from the internet if it is not present in the current directory. Furthermore, the data is one hot encoded. 
+    The data is downloaded from the internet if it is not present in the current directory. Furthermore, the data is one hot encoded.
 
     Args:
-        batch_size (int, optional): The batch size. Defaults to 4. 
+        batch_size (int, optional): The batch size. Defaults to 4.
         train_ratio (float, optional): The ratio of the training data. Defaults to 0.9.
         block_size (int, optional): The size of the block. Defaults to 8.
 
     """
-
 
     # check if the file "input.txt" exists in the current directory
     # if not, download it from the internet
