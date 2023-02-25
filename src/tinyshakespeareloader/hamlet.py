@@ -73,6 +73,8 @@ class MiniShakesPeare(Dataset):
 
 def get_data(batch_size=4, train_ratio=0.9, block_size=8):
     """Get the train and test dataloaders as well as the vocabulary size, the vocabulary itself, the encoding and decoding functions.
+    The data is downloaded from the internet if it is not present in the current directory. Furthermore, the data is one hot encoded. 
+
     Args:
         batch_size (int, optional): The batch size. Defaults to 4. 
         train_ratio (float, optional): The ratio of the training data. Defaults to 0.9.
