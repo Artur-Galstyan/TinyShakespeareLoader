@@ -3,7 +3,6 @@
 
 ## A PyTorch DataLoader for the TinyShakespeare Dataset
 
-
 If you followed Andrej Karparthy's tutorial on GPT, you will notice he used the TinyShakespeare dataset, but not with the PyTorch DataLoader.
 This repository fills that gap.
 
@@ -11,7 +10,7 @@ The TinyShakespeare dataset is a small dataset of Shakespeare's plays, with each
 
 ```console
 
-    $ pip install TinyShakespeareLoader
+    pip install TinyShakespeareLoader
 
 ```
 
@@ -29,4 +28,3 @@ Then, to use it, simply import it and use it as a PyTorch DataLoader:
         print(batch)
 
 ```
-
