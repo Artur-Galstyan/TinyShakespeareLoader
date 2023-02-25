@@ -1,4 +1,3 @@
-
 from torch.utils.data import DataLoader
 
 from tinyshakespeareloader.hamlet import get_data

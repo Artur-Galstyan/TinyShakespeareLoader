@@ -19,12 +19,11 @@ References:
     - https://setuptools.pypa.io/en/latest/userguide/entry_point.html
     - https://pip.pypa.io/en/stable/reference/pip_install
 """
-import numpy as np
-from torch.utils.data import DataLoader, Dataset
 import logging
 import sys
 
-from tinyshakespeareloader import __version__
+import numpy as np
+from torch.utils.data import DataLoader, Dataset
 
 __author__ = "Artur A. Galstyan"
 __copyright__ = "Artur A. Galstyan"
@@ -87,7 +86,7 @@ def get_data(batch_size=4, train_ratio=0.9, block_size=8):
     if not os.path.exists("input.txt"):
         import urllib.request
 
-        url = "https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt"
+        url = "https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt"  # noqa
         _logger.info("Downloading the dataset from %s", url)
         urllib.request.urlretrieve(url, "input.txt")
 
@@ -103,8 +102,12 @@ def get_data(batch_size=4, train_ratio=0.9, block_size=8):
     # Lookup table to map integers to single characters
     idx_to_char = {i: ch for i, ch in enumerate(chars)}
 
-    encode = lambda string: np.array([char_to_idx[ch] for ch in string])
-    decode = lambda latent: "".join([idx_to_char[idx] for idx in latent])
+    def encode(string: str) -> np.ndarray:
+        return np.array([char_to_idx[ch] for ch in string])
+
+    def decode(latent) -> str:
+        return "".join([idx_to_char[idx] for idx in latent])
+
     data = np.array(encode(text))
     n = int(train_ratio * len(data))
 
