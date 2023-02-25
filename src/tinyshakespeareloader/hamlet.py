@@ -19,8 +19,8 @@ References:
     - https://setuptools.pypa.io/en/latest/userguide/entry_point.html
     - https://pip.pypa.io/en/stable/reference/pip_install
 """
-
-import argparse
+import numpy as np
+from torch.utils.data import DataLoader, Dataset
 import logging
 import sys
 
@@ -38,10 +38,6 @@ _logger = logging.getLogger(__name__)
 # Python scripts/interactive interpreter, e.g. via
 # `from tinyshakespeareloader.skeleton import fib`,
 # when using this Python module as a library.
-
-
-import numpy as np
-from torch.utils.data import DataLoader, Dataset
 
 
 class MiniShakesPeare(Dataset):
@@ -72,8 +68,10 @@ class MiniShakesPeare(Dataset):
 
 
 def get_data(batch_size=4, train_ratio=0.9, block_size=8):
-    """Get the train and test dataloaders as well as the vocabulary size, the vocabulary itself, the encoding and decoding functions.
-    The data is downloaded from the internet if it is not present in the current directory. Furthermore, the data is one hot encoded.
+    """Get the train and test dataloaders as well as the vocabulary size, the
+    vocabulary itself, the encoding and decoding functions.
+    The data is downloaded from the internet if it is not present in the current
+    directory. Furthermore, the data is one hot encoded.
 
     Args:
         batch_size (int, optional): The batch size. Defaults to 4.
@@ -90,7 +88,7 @@ def get_data(batch_size=4, train_ratio=0.9, block_size=8):
         import urllib.request
 
         url = "https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt"
-        logging.info("Downloading the dataset from %s", url)
+        _logger.info("Downloading the dataset from %s", url)
         urllib.request.urlretrieve(url, "input.txt")
 
     with open("input.txt", "r") as f:
