@@ -79,18 +79,26 @@ def get_data(batch_size=4, train_ratio=0.9, block_size=8):
 
     """
 
-    # check if the file "input.txt" exists in the current directory
-    # if not, download it from the internet
     import os
 
-    if not os.path.exists("input.txt"):
+    # get current absolute path to this file
+    current_path = os.path.abspath(os.path.dirname(__file__))
+    # get the parent directory of the current path
+    parent_path = os.path.dirname(current_path)
+
+    # check if there is a folder called data in the parent_path
+
+    if not os.path.exists(parent_path + "/data"):
+        os.makedirs(parent_path + "/data")
+
+    if not os.path.exists(parent_path + "/data/input.txt"):
         import urllib.request
 
         url = "https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt"  # noqa
         _logger.info("Downloading the dataset from %s", url)
-        urllib.request.urlretrieve(url, "input.txt")
+        urllib.request.urlretrieve(url, parent_path + "/data/input.txt")
 
-    with open("input.txt", "r") as f:
+    with open(parent_path + "/data/input.txt", "r") as f:
         text = f.read()
     chars = sorted(list(set(text)))
     # print("".join(chars))
