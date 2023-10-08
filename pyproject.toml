@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tinyshakespeareloader"
-version = "0.8.0"
+version = "1.8.0"
 description = ""
 authors = ["Artur A. Galstyan <galstyan.artu@gmail.com>"]
 license = "MIT"
