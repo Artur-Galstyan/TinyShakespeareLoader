@@ -10,7 +10,7 @@ __license__ = "MIT"
 def test_dataloaders():
     """API Tests"""
     data = get_data()
-    train_data, val_data = data["train_dataloader"], data["test_dataloader"]
+    train_data, val_data = data.train_dataloader, data.test_dataloader
 
     # check if the dataloaders are not None
     assert train_data is not None and val_data is not None
@@ -22,7 +22,7 @@ def test_dataloaders():
 def test_dataloaders_batch_size():
     """API Tests"""
     data = get_data()
-    train_data, val_data = data["train_dataloader"], data["test_dataloader"]
+    train_data, val_data = data.train_dataloader, data.test_dataloader
 
     # check if the dataloaders have the correct batch size
     assert train_data.batch_size == 4 and val_data.batch_size == 4
@@ -36,8 +36,8 @@ def test_dataloaders_iterability():
     data = get_data(
         train_ratio=train_ratio, batch_size=batch_size, block_size=block_size
     )
-    train_data, val_data = data["train_dataloader"], data["test_dataloader"]
-    vocab_size = data["vocabulary_size"]
+    train_data, val_data = data.train_dataloader, data.test_dataloader
+    vocab_size = data.vocab_size
 
     assert vocab_size == 65
 
@@ -46,14 +46,3 @@ def test_dataloaders_iterability():
 
     for x, y in train_data:
         assert x.shape[1] == block_size and y.shape[1] == block_size
-
-
-'''
-def test_main(capsys):
-    """CLI Tests"""
-    # capsys is a pytest fixture that allows asserts against stdout/stderr
-    # https://docs.pytest.org/en/stable/capture.html
-    main(["7"])
-    captured = capsys.readouterr()
-    assert "The 7-th Fibonacci number is 13" in captured.out
-'''

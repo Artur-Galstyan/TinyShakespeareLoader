@@ -1,4 +1,3 @@
-
 # TinyShakespeareLoader
 
 ## A PyTorch DataLoader for the TinyShakespeare Dataset
@@ -20,11 +19,13 @@ Then, to use it, simply import it and use it as a PyTorch DataLoader:
     from TinyShakespeareLoader.hamlet import get_data
 
 
-    data = get_data()
+    tinyshakespeare = get_data()
 
-    train_dataloader, test_dataloader = data["train_dataloader"], data["test_dataloader"]
+    train_dataloader, test_dataloader = tinyshakespeare.train_dataloader, tinyshakespeare.test_dataloader
 
     for batch in train_dataloader:
         print(batch)
 
 ```
+
+You can provide your own encoder function if you want - but it's not required! If you don't, it will just simply use the character level encoding, that Andrej also used in his tutorial.

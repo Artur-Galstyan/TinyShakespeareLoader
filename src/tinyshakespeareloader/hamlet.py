@@ -1,27 +1,8 @@
-"""
-This is a skeleton file that can serve as a starting point for a Python
-console script. To run this script uncomment the following lines in the
-``[options.entry_points]`` section in ``setup.cfg``::
-
-    console_scripts =
-         fibonacci = tinyshakespeareloader.skeleton:run
-
-Then run ``pip install .`` (or ``pip install -e .`` for editable mode)
-which will install the command ``fibonacci`` inside your current environment.
-
-Besides console scripts, the header (i.e. until ``_logger``...) of this file can
-also be used as template for Python modules.
-
-Note:
-    This file can be renamed depending on your needs or safely removed if not needed.
-
-References:
-    - https://setuptools.pypa.io/en/latest/userguide/entry_point.html
-    - https://pip.pypa.io/en/stable/reference/pip_install
-"""
 import logging
+import os
 import sys
-
+from typing import Callable, Optional
+from jaxtyping import Array
 import numpy as np
 from torch.utils.data import DataLoader, Dataset
 
@@ -30,13 +11,6 @@ __copyright__ = "Artur A. Galstyan"
 __license__ = "MIT"
 
 _logger = logging.getLogger(__name__)
-
-
-# ---- Python API ----
-# The functions defined in this section can be imported by users in their
-# Python scripts/interactive interpreter, e.g. via
-# `from tinyshakespeareloader.skeleton import fib`,
-# when using this Python module as a library.
 
 
 class MiniShakesPeare(Dataset):
@@ -66,21 +40,119 @@ class MiniShakesPeare(Dataset):
         return x, y
 
 
-def get_data(batch_size=4, train_ratio=0.9, block_size=8):
+class TinyShakespeare:
+    train_dataloader: DataLoader
+    test_dataloader: DataLoader
+    vocab_size: int | None
+    encode: Callable[[str], Array] | None
+    decode: Callable[[Array], str] | None
+
+    def __init__(
+        self,
+        train_dataloader: DataLoader,
+        test_dataloader: DataLoader,
+        vocab_size: int | None,
+        encode: Callable[[str], Array] | None,
+        decode: Callable[[Array], str] | None,
+    ):
+        self.train_dataloader = train_dataloader
+        self.test_dataloader = test_dataloader
+        self.vocab_size = vocab_size
+        self.encode = encode
+        self.decode = decode
+
+
+def get_data(
+    batch_size=4,
+    train_ratio=0.9,
+    block_size=8,
+    encoder: Optional[Callable] = None,
+    shuffle=False,
+) -> TinyShakespeare:
     """Get the train and test dataloaders as well as the vocabulary size, the
     vocabulary itself, the encoding and decoding functions.
     The data is downloaded from the internet if it is not present in the current
-    directory. Furthermore, the data is one hot encoded.
+    directory. Furthermore, the data is one hot encoded. You can also provide your
+    own encoder function. In that case the vocabulary size is None as well as the
+    encoding and decoding functions (since they are provided by you).
 
     Args:
         batch_size (int, optional): The batch size. Defaults to 4.
         train_ratio (float, optional): The ratio of the training data. Defaults to 0.9.
         block_size (int, optional): The size of the block. Defaults to 8.
+        encoder (Optional[Callable], optional): The encoder function. Defaults to None, which performs a character level encoding.
+        shuffle (bool, optional): Whether to shuffle the data. Defaults to False.
 
+    Returns:
+        TinyShakespeare: The train and test dataloaders as well as the vocabulary size, the
+        vocabulary itself, the encoding and decoding functions (if the encoder is None)
     """
+    text = get_text()
+    vocab_size = None
+    decoder = None
 
-    import os
+    if encoder is not None:
+        data = np.array(encoder(text))
+    else:
+        chars = sorted(list(set(text)))
+        vocab_size = len(chars)
 
+        # Lookup table to map single characters to integers
+        char_to_idx = {ch: i for i, ch in enumerate(chars)}
+        # Lookup table to map integers to single characters
+        idx_to_char = {i: ch for i, ch in enumerate(chars)}
+
+        def encode(string: str) -> Array:
+            return np.array([char_to_idx[ch] for ch in string])  # type: ignore
+
+        def decode(latent) -> str:
+            return "".join([idx_to_char[idx] for idx in latent])
+
+        encoder = encode
+        decoder = decode
+        data = np.array(encode(text))
+
+    n = int(train_ratio * len(data))
+
+    train_data = data[:n]
+    test_data = data[n:]
+
+    train_dataset = MiniShakesPeare(train_data, block_size=block_size)
+
+    test_dataset = MiniShakesPeare(test_data, block_size=block_size)
+    train_dataloader = DataLoader(
+        train_dataset,
+        batch_size=batch_size,
+        shuffle=shuffle,
+    )
+    test_dataloader = DataLoader(
+        test_dataset,
+        batch_size=batch_size,
+        shuffle=shuffle,
+    )
+
+    return TinyShakespeare(
+        train_dataloader=train_dataloader,
+        test_dataloader=test_dataloader,
+        vocab_size=vocab_size,
+        encode=encoder,
+        decode=decoder,
+    )
+
+
+def setup_logging(loglevel):
+    """Setup basic logging
+
+    Args:
+      loglevel (int): minimum loglevel for emitting messages
+    """
+    logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
+    logging.basicConfig(
+        level=loglevel, stream=sys.stdout, format=logformat, datefmt="%Y-%m-%d %H:%M:%S"
+    )
+
+
+def get_text():
     # get current absolute path to this file
     current_path = os.path.abspath(os.path.dirname(__file__))
     # get the parent directory of the current path
@@ -100,59 +172,4 @@ def get_data(batch_size=4, train_ratio=0.9, block_size=8):
 
     with open(parent_path + "/data/input.txt", "r") as f:
         text = f.read()
-    chars = sorted(list(set(text)))
-    # print("".join(chars))
-    vocabulary_size = len(chars)
-
-    # Lookup table to map single characters to integers
-    char_to_idx = {ch: i for i, ch in enumerate(chars)}
-
-    # Lookup table to map integers to single characters
-    idx_to_char = {i: ch for i, ch in enumerate(chars)}
-
-    def encode(string: str) -> np.ndarray:
-        return np.array([char_to_idx[ch] for ch in string])
-
-    def decode(latent) -> str:
-        return "".join([idx_to_char[idx] for idx in latent])
-
-    data = np.array(encode(text))
-    n = int(train_ratio * len(data))
-
-    train_data = data[:n]
-    test_data = data[n:]
-
-    train_dataset = MiniShakesPeare(train_data, block_size=block_size)
-
-    test_dataset = MiniShakesPeare(test_data, block_size=block_size)
-    train_dataloader = DataLoader(
-        train_dataset,
-        batch_size=batch_size,
-        shuffle=False,
-    )
-    test_dataloader = DataLoader(
-        test_dataset,
-        batch_size=batch_size,
-        shuffle=False,
-    )
-
-    return {
-        "train_dataloader": train_dataloader,
-        "test_dataloader": test_dataloader,
-        "vocabulary_size": vocabulary_size,
-        "chars": chars,
-        "encode": encode,
-        "decode": decode,
-    }
-
-
-def setup_logging(loglevel):
-    """Setup basic logging
-
-    Args:
-      loglevel (int): minimum loglevel for emitting messages
-    """
-    logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
-    logging.basicConfig(
-        level=loglevel, stream=sys.stdout, format=logformat, datefmt="%Y-%m-%d %H:%M:%S"
-    )
+    return text
